@@ -208,5 +208,10 @@ class CrudRestTestApplicationTests {
         // then - verify the output
         response.andDo(print())
                 .andExpect(status().isOk());
+
+        // verify employee is deleted
+        mockMvc.perform(get("/api/employees/{id}", savedEmployee.getId()))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 }

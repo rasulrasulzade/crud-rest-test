@@ -5,9 +5,9 @@ import com.example.crudresttest.exception.ResourceNotFoundException;
 import com.example.crudresttest.model.response.GetEmployeesResponse;
 import com.example.crudresttest.repository.EmployeeRepository;
 import com.example.crudresttest.service.EmployeeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Optional<Employee> savedEmployee = employeeRepository.findByEmail(employee.getEmail());
         if (savedEmployee.isPresent()) {
-            throw new ResourceNotFoundException("Employee already exist with given email:" + employee.getEmail());
+            throw new ResourceNotFoundException("Employee already exist with given email:" + employee.getEmail(), HttpStatus.BAD_REQUEST);
         }
         return employeeRepository.save(employee);
     }

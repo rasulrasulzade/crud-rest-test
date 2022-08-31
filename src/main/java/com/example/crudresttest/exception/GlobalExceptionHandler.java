@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exc) {
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleResourceNotFoundException(CustomException exc) {
         String message = exc.getMessage() != null ? exc.getMessage() : "Error occurred!";
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(exc.getStatus().value())

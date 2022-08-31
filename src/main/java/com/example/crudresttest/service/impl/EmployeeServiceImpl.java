@@ -1,7 +1,7 @@
 package com.example.crudresttest.service.impl;
 
 import com.example.crudresttest.entity.Employee;
-import com.example.crudresttest.exception.ResourceNotFoundException;
+import com.example.crudresttest.exception.CustomException;
 import com.example.crudresttest.model.response.GetEmployeesResponse;
 import com.example.crudresttest.repository.EmployeeRepository;
 import com.example.crudresttest.service.EmployeeService;
@@ -23,7 +23,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Optional<Employee> savedEmployee = employeeRepository.findByEmail(employee.getEmail());
         if (savedEmployee.isPresent()) {
-            throw new ResourceNotFoundException("Employee already exist with given email:" + employee.getEmail(), HttpStatus.BAD_REQUEST);
+            throw new CustomException("Employee already exist with given email:" + employee.getEmail(), HttpStatus.BAD_REQUEST);
         }
         return employeeRepository.save(employee);
     }

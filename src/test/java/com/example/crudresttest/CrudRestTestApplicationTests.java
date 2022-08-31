@@ -1,6 +1,7 @@
 package com.example.crudresttest;
 
 import com.example.crudresttest.entity.Employee;
+import com.example.crudresttest.model.response.ErrorResponse;
 import com.example.crudresttest.model.response.GetEmployeesResponse;
 import com.example.crudresttest.repository.EmployeeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,7 +41,7 @@ class CrudRestTestApplicationTests {
     private EmployeeRepository employeeRepository;
 
     @BeforeEach
-    public void setU() {
+    public void setUp() {
         employeeRepository.deleteAll();
     }
 
@@ -64,6 +66,38 @@ class CrudRestTestApplicationTests {
                 .andExpect(jsonPath("$.firstName", is(employee.getFirstName())))
                 .andExpect(jsonPath("$.lastName", is(employee.getLastName())))
                 .andExpect(jsonPath("$.email", is(employee.getEmail())));
+    }
+
+    @DisplayName("Create new employee - negative scenario")
+    @Test
+    public void testCreateEmployeeReturnCustomException() throws Exception {
+        // given - precondition or setup
+        Employee employee = Employee.builder()
+                .firstName("Chuck")
+                .lastName("Michell")
+                .email("chuck.m@gmail.com")
+                .build();
+        employeeRepository.save(employee);
+
+        Employee employeeWithSameEmail = Employee.builder()
+                .firstName("Malish")
+                .lastName("Williams")
+                .email("chuck.m@gmail.com")
+                .build();
+
+        // when - action or behaviour that we are going test
+        ResultActions response = mockMvc.perform(post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(employeeWithSameEmail)));
+
+        // then - verify the result or output using assert statements
+        response.andDo(print())
+                .andExpect(status().isBadRequest());
+
+        MvcResult result = response.andReturn();
+        ErrorResponse errorResponse = objectMapper.readValue(result.getResponse().getContentAsString(), ErrorResponse.class);
+
+        assertEquals("Employee already exist with given email:" + employee.getEmail(), errorResponse.getMessage());
     }
 
 

@@ -6,10 +6,10 @@ import org.springframework.http.HttpStatus;
 
 @Setter
 @Getter
-public class ResourceNotFoundException extends RuntimeException{
+public class CustomException extends RuntimeException{
     private HttpStatus status;
 
-    public ResourceNotFoundException(String message, HttpStatus status) {
+    public CustomException(String message, HttpStatus status) {
         super(message);
         this.status = status;
     }
